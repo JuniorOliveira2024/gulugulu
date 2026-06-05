@@ -7,48 +7,57 @@ import { toast } from "sonner";
 
 
 
+interface PrestacaoServico {
+    id: string;
+    disignacao: string;
+    estado: "pendente" | "aceite" | "recusado";
+    subtotal: number;
+    created_at?: string;
+    updated_at?: string;
+}
+
 export const RequestTable = () => {
-    const [prestacaoServico, setPrestacaoServico] = useState<any[]>([]);
+    const [prestacaoServico, setPrestacaoServico] = useState<PrestacaoServico[]>([]);
 
     useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
-        try {
-            const response = await fetch(
-                "http://localhost:8080/prestacao_servico/",
-                {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            if (response.status === 200) {
-                toast.success(
-                    "Prestação de serviços buscada com sucesso!"
+        const fetchData = async () => {
+            try {
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/prestacao_servico/`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    }
                 );
 
-                const data = await response.json();
+                if (response.status === 200) {
+                    toast.success(
+                        "Prestação de serviços buscada com sucesso!"
+                    );
 
-                console.log(data);
+                    const data = await response.json();
 
-                setPrestacaoServico(data.data);
-            } else {
+                    console.log(data);
+
+                    setPrestacaoServico(data.data);
+                } else {
+                    toast.error(
+                        "Erro ao buscar prestação de serviços!"
+                    );
+                }
+            } catch (error) {
+                console.error(error);
+
                 toast.error(
-                    "Erro ao buscar prestação de serviços!"
+                    "Erro ao conectar com o servidor!"
                 );
             }
-        } catch (error) {
-            console.error(error);
+        };
 
-            toast.error(
-                "Erro ao conectar com o servidor!"
-            );
-        }
-    };
+        fetchData();
+    }, []);
 
     return (
         <div>
@@ -120,7 +129,7 @@ export const RequestTable = () => {
                         </tr>
 
                         {/* Dados vindos da API */}
-                        {prestacaoServico.map((item: any) => (
+                        {prestacaoServico.map((item: PrestacaoServico) => (
                             <tr
                                 key={item.id}
                                 className="border-t border-slate-200 dark:border-slate-700"
