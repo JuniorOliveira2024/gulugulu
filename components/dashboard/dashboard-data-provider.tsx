@@ -44,7 +44,7 @@ const DashboardDataContext = createContext<DashboardDataContextType>({
   proposals: [],
   loading: true,
 });
-
+// Helper functions to fetch data from the API
 async function getRatesByUserId(id: string, token: string): Promise<RatesApiData | null> {
   const response = await fetch(`http://localhost:8080/prestador/get-preco-hora/${id}`, {
     method: "GET",
